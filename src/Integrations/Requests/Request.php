@@ -3,6 +3,9 @@
 namespace Wildix\Integrations\Requests;
 
 use GuzzleHttp\Psr7\Request as BaseRequest;
+use GuzzleHttp\Psr7\Stream;
+use GuzzleHttp\Psr7\Utils;
+use Psr\Http\Message\StreamInterface;
 
 class Request extends BaseRequest implements RequestInterface
 {
@@ -29,8 +32,12 @@ class Request extends BaseRequest implements RequestInterface
      *
      * @return array|null body.
      */
-    public function getBody(): ?array
+    public function getBody(): StreamInterface
     {
+        if (is_array($this->body)) {
+            $this->body = Utils::streamFor(json_encode($this->body));
+        }
+
         return $this->body;
     }
 }
